@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PrintPulse - Printer Scheduling System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#0f172a;--mut:#64748b;--line:#e5e9f2;--soft:#f1f5f9;--acc:#2563eb;--accs:#dbeafe;--urg:#d97706;--urgs:#fef3c7;--ok:#059669;--oks:#d1fae5;--bad:#dc2626;--bads:#fee2e2;--hero:linear-gradient(135deg,#0b1224,#14213d 60%,#1b2d5a);--sh:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070b16;--card:#0f1628;--ink:#e8edf8;--mut:#8b97b3;--line:#1f2a45;--soft:#151e36;--accs:#162a5c;--urgs:#3a2a0a;--oks:#0a3326;--bads:#3a1416;--sh:0 8px 28px rgba(0,0,0,.4)}}
+:root[data-theme="dark"]{--bg:#070b16;--card:#0f1628;--ink:#e8edf8;--mut:#8b97b3;--line:#1f2a45;--soft:#151e36;--accs:#162a5c;--urgs:#3a2a0a;--oks:#0a3326;--bads:#3a1416;--sh:0 8px 28px rgba(0,0,0,.4)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--card) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar{max-width:1240px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--hero);display:grid;place-items:center;color:#fff}
+.brand b{display:block;font-weight:700;letter-spacing:-.01em}
+.brand small{font:500 10px "JetBrains Mono",monospace;letter-spacing:.18em;color:var(--mut)}
+.sp{flex:1}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;font:600 10.5px "JetBrains Mono",monospace;letter-spacing:.08em;background:var(--oks);color:var(--ok)}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pl 2s infinite}
+@keyframes pl{50%{opacity:.3}}
+.ib{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+main{max-width:1240px;margin:auto;padding:20px}
+.hero{position:relative;overflow:hidden;border-radius:26px;background:var(--hero);color:#fff;padding:38px 40px;box-shadow:var(--sh)}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;border:34px solid rgba(96,165,250,.1)}
+.hero:before{width:380px;height:380px;right:-90px;top:-150px}.hero:after{width:300px;height:300px;right:140px;bottom:-190px;border-color:rgba(37,99,235,.2)}
+.tag{display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);font:500 10.5px "JetBrains Mono",monospace;letter-spacing:.14em}
+.hero h1{font-size:clamp(28px,4.4vw,46px);line-height:1.08;letter-spacing:-.035em;margin:18px 0 12px;font-weight:800;position:relative}
+.hero h1 span{background:linear-gradient(90deg,#60a5fa,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:560px;color:#b4c0dc;margin:0 0 20px;position:relative}
+.leg{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:#cbd5ee;position:relative}
+.leg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh)}
+.stat{padding:18px 20px;transition:transform .2s}.stat:hover{transform:translateY(-2px)}
+.ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center}
+.stat b{display:block;font-size:30px;font-weight:700;letter-spacing:-.03em;margin-top:14px;line-height:1}
+.stat span{color:var(--mut);font-size:12px}
+.grid{display:grid;grid-template-columns:340px 1fr 340px;gap:16px;align-items:start}
+.col{display:grid;gap:16px}
+.ch{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.ch h3{margin:0;font-size:15px;font-weight:600}.ch small{color:var(--mut);font-size:12px}
+.badge{margin-left:auto;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600}
+.cb{padding:18px 20px}
+label{display:block;font-size:12.5px;font-weight:600;margin:0 0 6px}
+input,select{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--ink);padding:0 12px;font:inherit;outline:none;transition:.15s}
+input:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 18%,transparent);background:var(--card)}
+select:disabled{opacity:.5}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.seg button{height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 13px Inter,sans-serif;cursor:pointer;display:flex;gap:7px;align-items:center;justify-content:center;transition:.15s}
+.seg button.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+.seg button.on.u{background:var(--urgs);border-color:var(--urg);color:var(--urg)}
+.btn{width:100%;height:44px;border:0;border-radius:12px;background:linear-gradient(180deg,#3b82f6,#2563eb);color:#fff;font:600 14px Inter,sans-serif;cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(37,99,235,.35);transition:.15s}
+.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.err{color:var(--bad);font-size:12px;min-height:18px;margin:-6px 0 8px}
+.disp{background:var(--hero);color:#fff;border:0;padding:22px}
+.disp small{font:500 10.5px "JetBrains Mono",monospace;letter-spacing:.18em;color:#8da2cf}
+.disp h3{margin:8px 0 6px;font-size:20px;font-weight:700}.disp p{margin:0 0 16px;color:#a9b6d3;font-size:12.5px}
+.disp .btn{box-shadow:none}
+.streak{display:flex;gap:6px;align-items:center;margin-top:14px;font:11px "JetBrains Mono",monospace;color:#8da2cf}
+.streak i{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.12);transition:.3s}
+.streak i.f{background:#f59e0b}
+.now{margin-top:14px;padding:12px;border-radius:12px;background:rgba(255,255,255,.07);display:none}
+.now.show{display:block}.now b{font-size:13px}
+.prog{height:6px;border-radius:9px;background:rgba(255,255,255,.12);margin-top:9px;overflow:hidden}
+.prog div{height:100%;width:0;background:linear-gradient(90deg,#38bdf8,#10b981);border-radius:9px}
+.list{padding:14px 16px;display:grid;gap:10px;min-height:96px}
+.job{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);animation:in .3s ease;transition:.2s}
+.job:hover{border-color:color-mix(in srgb,var(--acc) 40%,var(--line))}
+.job.next{border-color:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 14%,transparent)}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.num{min-width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font:600 12px "JetBrains Mono",monospace}
+.jt{flex:1;min-width:0}.jt b{display:block;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jt span{font:11px "JetBrains Mono",monospace;color:var(--mut);letter-spacing:.04em}
+.nx{font:600 9.5px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--ok);background:var(--oks);padding:3px 8px;border-radius:99px}
+.x{width:32px;height:32px;border-radius:9px;border:0;background:transparent;color:var(--mut);cursor:pointer;display:grid;place-items:center}
+.x:hover{background:var(--bads);color:var(--bad)}
+.empty{border:1.5px dashed var(--line);border-radius:14px;display:grid;place-items:center;color:var(--mut);padding:26px}
+.log{padding:6px 20px 14px;max-height:520px;overflow:auto}
+.le{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);animation:in .3s}
+.le:last-child{border:0}.le .ico{width:30px;height:30px;border-radius:50%;flex:none}
+.le p{margin:0;font-size:12.5px}.le small{font:10.5px "JetBrains Mono",monospace;color:var(--mut);letter-spacing:.06em}
+footer{max-width:1240px;margin:auto;padding:10px 20px 30px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--mut);font:11px "JetBrains Mono",monospace;letter-spacing:.06em}
+@media(max-width:1020px){.grid{grid-template-columns:1fr 1fr}.col:last-child{grid-column:1/-1}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.grid{grid-template-columns:1fr}.hero{padding:26px 22px}.pill{display:none}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+ <div class="logo" id="lg"></div>
+ <div class="brand"><b>PrintPulse</b><small>PRINTER SCHEDULING SYSTEM</small></div>
+ <div class="sp"></div>
+ <div class="pill"><span class="dot"></span>C CORE ACTIVE · WASM</div>
+ <button class="ib" id="th" title="Toggle theme" aria-label="Toggle theme"></button>
+</div></header>
+<main>
+ <section class="hero">
+  <span class="tag">DATA STRUCTURES LAB DASHBOARD</span>
+  <h1>Keep every page moving.<br><span>Let the scheduler decide.</span></h1>
+  <p>Every action runs through the real C scheduler, compiled to WebAssembly: FIFO queue for normal jobs, min-heap priority queue for urgent jobs, and a fairness rule that prevents starvation.</p>
+  <div class="leg"><span><i style="background:#60a5fa"></i>Normal = Queue (FIFO)</span><span><i style="background:#fbbf24"></i>Urgent = Min-heap</span><span><i style="background:#34d399"></i>Fairness limit = 3</span></div>
+ </section>
+ <section class="stats" id="stats"></section>
+ <div class="grid">
+  <div class="col">
+   <div class="card">
+    <div class="ch"><div class="ico" style="background:var(--acc);color:#fff" id="ia"></div><div><h3>Add print job</h3><small>Send a document to the scheduler</small></div></div>
+    <div class="cb">
+     <label for="nm">Document name</label>
+     <input id="nm" maxlength="49" placeholder="e.g. Research report" style="margin-bottom:14px" autocomplete="off">
+     <div class="row"><div><label for="pg">Pages</label><input id="pg" type="number" min="1" max="500" value="1"></div>
+     <div><label for="pr">Priority</label><select id="pr" disabled><option value="1">1 - Highest</option><option value="2">2 - Medium</option><option value="3">3 - Lowest</option></select></div></div>
+     <label>Job type</label>
+     <div class="seg"><button id="tn" class="on" type="button">Normal FIFO</button><button id="tu" type="button">Urgent</button></div>
+     <div class="err" id="er"></div>
+     <button class="btn" id="add" type="button">Add to scheduler</button>
+    </div>
+   </div>
+   <div class="card disp">
+    <small>NEXT DISPATCH</small><h3 id="dh">Ready to print?</h3>
+    <p>The scheduler picks the next job using priority and fairness.</p>
+    <button class="btn" id="go" type="button">Process next job</button>
+    <div class="now" id="now"><b id="nb"></b><div class="prog"><div id="pb"></div></div></div>
+    <div class="streak"><span>Urgent streak</span><span id="sk" style="display:flex;gap:6px;flex:1"></span><span id="st"></span></div>
+   </div>
+  </div>
+  <div class="col">
+   <div class="card"><div class="ch"><div class="ico" style="background:var(--urgs);color:var(--urg)" id="ib1"></div><div><h3>Urgent priority queue</h3><small>Min-heap order, priority 1 first</small></div><span class="badge" style="background:var(--urgs);color:var(--urg)" id="bu"></span></div><div class="list" id="lu"></div></div>
+   <div class="card"><div class="ch"><div class="ico" style="background:var(--accs);color:var(--acc)" id="ib2"></div><div><h3>Normal FIFO queue</h3><small>First in, first out</small></div><span class="badge" style="background:var(--accs);color:var(--acc)" id="bn"></span></div><div class="list" id="ln"></div></div>
+  </div>
+  <div class="col"><div class="card"><div class="ch"><div class="ico" style="background:var(--soft);color:var(--mut)" id="ig"></div><div><h3>Activity log</h3><small>Recent scheduler events</small></div></div><div class="log" id="lg2"></div></div></div>
+ </div>
+</main>
+<footer><span>PrintPulse - Data Structures and Algorithms project</span><span>C CORE · QUEUE + MIN-HEAP + FAIRNESS</span></footer>
+<script>
+const $=id=>document.getElementById(id);
+const I={print:'<rect x="6" y="14" width="12" height="8" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 9V3h12v6"/>',plus:'<path d="M12 5v14M5 12h14"/>',bolt:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',layers:'<path d="m12 2 10 5-10 5L2 7zM2 12l10 5 10-5M2 17l10 5 10-5"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',check:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',ban:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6"/>',play:'<path d="m6 3 14 9-14 9z"/>'};
+const svg=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* ---- C core (compiled to WebAssembly) ---- */
+const S={log:[],busy:false,urgent:false,st:null};let X;
+const dec=new TextDecoder(),enc=new TextEncoder();
+function state(){const p=X.api_state(),m=new Uint8Array(X.memory.buffer);let e=p;while(m[e])e++;return JSON.parse(dec.decode(m.slice(p,e)))}
+function log(t,k){S.log.unshift({t,k,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});S.log=S.log.slice(0,30)}
+function addJob(name,pages,urgent,pr){
+ const buf=new Uint8Array(X.memory.buffer,X.name_buf(),50);buf.fill(0);
+ const bytes=enc.encode(name);let n=Math.min(bytes.length,49);while(n>0&&(bytes[n]&0xC0)===0x80)n--;buf.set(bytes.slice(0,n));
+ const r=X.api_add(pages,urgent?1:0,pr);
+ if(r>0)log(`Added ${urgent?'urgent (P'+pr+')':'normal'} job #${r}: ${name}`,'add');return r}
+function cancel(id){const q=state(),j=[...q.urgent,...q.normal].find(x=>x.id===id);if(X.api_cancel(id)&&j)log(`Cancelled job #${id}: ${j.name}`,'can');render()}
+function processNext(){
+ if(S.busy)return;
+ const id=X.api_process();
+ if(!id){log('No jobs to process - queues are empty','can');render();return}
+ const j=state().last,u=!!j.urgent;S.busy=true;render();
+ const ms=Math.min(2600,700+j.pages*40),t0=performance.now();
+ $('now').classList.add('show');$('nb').textContent=`Printing ${u?'URGENT':'NORMAL'} #${j.id}: ${j.name}`;
+ (function tick(t){const p=Math.min(1,(t-t0)/ms);$('pb').style.width=p*100+'%';
+  if(p<1)return requestAnimationFrame(tick);
+  S.busy=false;log(`Processed ${u?'urgent':'normal'} job #${j.id}: ${j.name}`,'ok');$('now').classList.remove('show');render()})(t0);
+}
+/* ---- Render ---- */
+function jobRow(j,i,isNext,urg){const c=urg?'background:var(--urgs);color:var(--urg)':'background:var(--accs);color:var(--acc)';
+ return `<div class="job${isNext?' next':''}"><div class="num" style="${c}">${String(i+1).padStart(2,'0')}</div><div class="jt"><b>${esc(j.name)}</b><span>JOB #${j.id} · ${j.pages} PAGE${j.pages>1?'S':''}${urg?' · PRIORITY '+j.priority:''}</span></div>${isNext?'<span class="nx">NEXT</span>':''}<button class="x" data-id="${j.id}" title="Cancel job" aria-label="Cancel job">${svg('ban',16)}</button></div>`}
+function render(){
+ const q=S.st=state(),heap=q.urgent,nu=!!q.nextUrgent,any=q.normal.length||heap.length,LIMIT=q.limit;
+ const st=[['clock','var(--soft)','var(--mut)',q.normal.length+heap.length,'Pending jobs'],['bolt','var(--urgs)','var(--urg)',heap.length,'Urgent queue'],['layers','var(--accs)','var(--acc)',q.normal.length,'Normal queue'],['check','var(--oks)','var(--ok)',q.done,'Processed total']];
+ $('stats').innerHTML=st.map(s=>`<div class="card stat"><div class="ico" style="background:${s[1]};color:${s[2]}">${svg(s[0])}</div><b>${s[3]}</b><span>${s[4]}</span></div>`).join('');
+ $('lu').innerHTML=heap.length?heap.map((j,i)=>jobRow(j,i,i===0&&nu&&!S.busy,true)).join(''):'<div class="empty">No urgent jobs waiting</div>';
+ $('ln').innerHTML=q.normal.length?q.normal.map((j,i)=>jobRow(j,i,i===0&&!nu&&!S.busy,false)).join(''):'<div class="empty">No normal jobs waiting</div>';
+ $('bu').textContent=heap.length+' waiting';$('bn').textContent=q.normal.length+' waiting';
+ $('sk').innerHTML=Array.from({length:LIMIT},(_,i)=>`<i class="${i<q.streak?'f':''}"></i>`).join('');$('st').textContent=`${q.streak} / ${LIMIT}`;
+ $('go').disabled=S.busy;$('dh').textContent=S.busy?'Printing...':any?'Ready to print?':'Queues are empty';
+ const lc={add:['plus','var(--accs)','var(--acc)'],can:['ban','var(--bads)','var(--bad)'],ok:['check','var(--oks)','var(--ok)']};
+ $('lg2').innerHTML=S.log.length?S.log.map(e=>{const c=lc[e.k];return `<div class="le"><div class="ico" style="background:${c[1]};color:${c[2]}">${svg(c[0],14)}</div><div><p>${esc(e.t)}</p><small>${e.time} · ${e.k==='ok'?'PROCESS':e.k==='add'?'ADD':'CANCEL'}</small></div></div>`}).join(''):'<div class="empty" style="margin-top:14px">No activity yet</div>';
+ document.querySelectorAll('.x').forEach(b=>b.onclick=()=>cancel(+b.dataset.id));
+}
+/* ---- Wiring ---- */
+$('lg').innerHTML=svg('print',22);$('ia').innerHTML=svg('plus',20);$('ib1').innerHTML=svg('bolt',20);$('ib2').innerHTML=svg('layers',20);$('ig').innerHTML=svg('file',18);
+$('go').innerHTML=svg('play',14)+'Process next job';$('add').innerHTML=svg('plus',16)+'Add to scheduler';
+$('tn').innerHTML=svg('layers',15)+'Normal FIFO';$('tu').innerHTML=svg('bolt',15)+'Urgent';
+function setType(u){S.urgent=u;$('tn').className=u?'':'on';$('tu').className=u?'on u':'';$('pr').disabled=!u}
+$('tn').onclick=()=>setType(false);$('tu').onclick=()=>setType(true);
+function submit(){
+ const name=$('nm').value.trim(),pages=Number($('pg').value);
+ if(!name){$('er').textContent='Document name cannot be empty.';$('nm').focus();return}
+ if(!Number.isInteger(pages)||pages<1||pages>500){$('er').textContent='Pages must be a whole number from 1 to 500.';return}
+ const r=addJob(name,pages,S.urgent,Number($('pr').value));if(r<0){$('er').textContent='The C core rejected this job (code '+r+').';return}$('er').textContent='';$('nm').value='';$('pg').value=1;render();$('nm').focus()}
+$('add').onclick=submit;$('nm').onkeydown=e=>{if(e.key==='Enter')submit()};$('go').onclick=processNext;
+const root=document.documentElement,dark=()=>root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+function icon(){$('th').innerHTML=svg(dark()?'bolt':'moon',17)}
+$('th').onclick=()=>{root.dataset.theme=dark()?'light':'dark';icon()};icon();
+async function boot(){
+ const pill=document.querySelector('.pill');
+ try{
+  const bytes=window.WASM_B64?Uint8Array.from(atob(window.WASM_B64),c=>c.charCodeAt(0)):await (await fetch('scheduler.wasm')).arrayBuffer();
+  const {instance}=await WebAssembly.instantiate(bytes,{});X=instance.exports;if(X._initialize)X._initialize();X.api_init();
+  [['Annual report',24,0,0],['Exam paper',4,1,1],['Invoice batch',12,0,0],['Slides',18,1,2]].forEach(a=>addJob(a[0],a[1],!!a[2],a[3]));
+  S.log=S.log.slice(0,4);render();
+ }catch(e){pill.style.background='var(--bads)';pill.style.color='var(--bad)';pill.innerHTML='C CORE FAILED TO LOAD';$('er').textContent='Could not start the WebAssembly C core: '+e.message;$('add').disabled=$('go').disabled=true}
+}
+boot();
+</script>
+</body>
+</html>
